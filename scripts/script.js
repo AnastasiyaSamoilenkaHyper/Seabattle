@@ -168,7 +168,6 @@ function create() {
         }
       }
     });
-    ///////////////////////TEXT FOR SHOOT COUNTER/////////////////////////////////
   }
   //////////////////////////////1 CELL SHIP/////////////////////////////////////////
   let i;
@@ -234,7 +233,7 @@ function create() {
               }
             );
             winnerText.setPadding({ x: 15, y: 15 });
-            ////////////////////////FIREWORK FUNCTION///////////////////////////
+            
             addFireworks("firework", scene);
           }
         }
@@ -307,7 +306,6 @@ function create() {
             onEvent();
           }, 1000);
           function onEvent() {
-            ////////////////////////////////////////FIREWORKS//////////////////////////////////////////
 
             let newBackground = scene.add.image(400, 300, "waves");
             newBackground.displayWidth = 800;
@@ -324,7 +322,6 @@ function create() {
               }
             );
             winnerText.setPadding({ x: 15, y: 15 });
-            ////////////////////////FIREWORK///////////////////////////////
             addFireworks("firework", scene);
           }
         }
@@ -415,7 +412,6 @@ function create() {
               }
             );
             winnerText.setPadding({ x: 15, y: 15 });
-            /////////////////////////////FIREWORK////////////////////////////////////////
             addFireworks("firework", scene);
           }
         }
