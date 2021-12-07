@@ -1,4 +1,4 @@
-var config = {
+let config = {
   type: Phaser.AUTO,
   width: 800,
   height: 600,
@@ -10,7 +10,6 @@ var config = {
     default: "arcade",
     arcade: {
       gravity: false,
-      //debug: true,
     },
   },
   scale: {
@@ -20,7 +19,7 @@ var config = {
 };
 
 // An instance of a Phaser.Game object is assigned to a local variable called game and the configuration object is passed to it. This will start the process of bringing Phaser to life.
-var game = new Phaser.Game(config);
+let game = new Phaser.Game(config);
 
 function preload() {
   this.load.image("waves", "./assets/pattern.jpg");
@@ -53,8 +52,6 @@ let sea;
 let hit;
 let miss;
 let newBackground;
-// let firework;
-// let sceleton;
 
 function create() {
   //background
@@ -65,6 +62,8 @@ function create() {
   let cell_quantity = 10;
   let x_0 = 210;
   let y_0 = 120;
+  let all = this;
+  let scene = this;
 
   //Score
   scoreText = this.add.text(300, 70, `score: ${score} /16`, {
@@ -87,7 +86,7 @@ function create() {
   attemptText.setPadding({ x: 10, y: 5 });
 
   // grid
-  var grid = this.add.grid(
+  let grid = this.add.grid(
     x_0 + (cell_size * cell_quantity) / 2, //x
     y_0 + (cell_size * cell_quantity) / 2, //y
     cell_size * cell_quantity, //width
@@ -105,7 +104,7 @@ function create() {
   let total_number_ships1 = 4;
   let total_number_splash = cell_quantity * cell_quantity;
 
-  var count = 0;
+  let count = 0;
   //////////////////////////SPLASHES////////////////////////////////////
 
   for (
@@ -121,7 +120,7 @@ function create() {
     }
     splash_config.push([k, l]);
 
-    var splash = this.add.sprite(
+    let splash = this.add.sprite(
       x_0 + cell_size * (k + 0.5),
       y_0 + cell_size * (l + 0.5),
       "splash"
@@ -133,7 +132,7 @@ function create() {
     splash.alpha = 0.000001;
 
     let loserText;
-    let scene = this;
+    // let scene = this;
 
     splash.on("pointerdown", function () {
       miss = scene.sound.add("miss", { volume: 0.4 });
@@ -163,261 +162,95 @@ function create() {
             }
           );
           loserText.setPadding({ x: 15, y: 15 });
-          ////////////////////////////Sceleton FUNCTION////////////////////////////////
           addSceleton("sceleton", scene);
         }
       }
     });
   }
+
   //////////////////////////////1 CELL SHIP/////////////////////////////////////////
-  let i;
-  let j;
+  doShips(
+    4,
+    cell_quantity,
+    1, //LimitX
+    1, // LimitY
+    0, //checkI
+    0, //checkY
+    -7, //hitbox
+    3,
+    36,
+    36, //hitbox
+    cell_size,
+    0.5, //flowerPositionI
+    0.5, //flowerPositionY
+    all,
+    x_0,
+    y_0,
+    0.5, //spritePositionI
+    0.5, // spritePositionY
+    scene,
+    "ship1",
+    1, // howMuchLife
+    0, // limitI
+    0,
+    0
+  );
 
-  //creating 4 ships using the variable "total_number_ships1"
-  for (let ship_number = 0; ship_number < total_number_ships1; ship_number++) {
-    //randomly generated position of a ship
-    let i = Phaser.Math.Between(0, cell_quantity - 1);
-    let j = Phaser.Math.Between(0, cell_quantity - 1);
+  //////////////////////////////2 CELL SHIP////////////////////////////////
+  doShips(
+    3,
+    cell_quantity,
+    1, //LimitX
+    2, // LimitY
+    0, //checkI
+    1, //checkY
+    -6, //hitbox
+    0,
+    39,
+    80, //hitbox
+    cell_size,
+    0.5, //flowerPositionI
+    0.5, //flowerPositionY
+    all,
+    x_0,
+    y_0,
+    0.5, //spritePositionI
+    1, // spritePositionY
+    scene,
+    "ship2",
+    2, // howMuchLife
+    0, // limitI
+    0,
+    0
+  );
 
-    //checks if i,j already used in ships_config -- if used generates new i,j (if it returns false it goes to the next steps)
-    while (ships_config.some((ship) => ship[0] == i && ship[1] == j)) {
-      i = Phaser.Math.Between(0, cell_quantity - 1);
-      j = Phaser.Math.Between(0, cell_quantity - 1);
-    }
-
-    //ship position is stored in array "ships_config"
-    ships_config.push([i, j]);
-
-    var ship1 = this.add.sprite(
-      x_0 + cell_size * (i + 0.5),
-      y_0 + cell_size * (j + 0.5),
-      "ship1"
-    );
-
-    //ship image is scaled to fit into the cell
-    ship1.setScale((0.9 * cell_size) / ship1_y_size);
-    ship1.setInteractive();
-
-    ship1.input.hitArea.setTo(-7, 3, 36, 36);
-    ship1.alpha = 0.000001;
-
-    let winnerText;
-    let scene = this;
-
-    ship1.on("pointerdown", function () {
-      hit = scene.sound.add("hit", { volume: 0.4 });
-      hit.play({
-        seek: 2.55,
-      });
-      if (this.alpha != 1) {
-        score++;
-        this.alpha = 1;
-        scoreText.setText("score: " + score + " /16");
-        if (score == 16) {
-          setTimeout(() => {
-            onEvent();
-          }, 1000);
-          function onEvent() {
-            let newBackground = scene.add.image(400, 300, "waves");
-            newBackground.displayWidth = 800;
-            newBackground.displayHeight = 600;
-            winnerText = scene.add.text(
-              100,
-              300,
-              "YOU WON! ALL SHIPS ARE DEFEATED!",
-              {
-                fontSize: "32px",
-                fill: "#000",
-                backgroundColor: "#dffbff",
-                fontFamily: "carino_sanssemibold",
-              }
-            );
-            winnerText.setPadding({ x: 15, y: 15 });
-            
-            addFireworks("firework", scene);
-          }
-        }
-      }
-    });
-  }
-  //////////////////////////////2 CELL SHIP/////////////////////////////////////////
-
-  for (let ship_number = 0; ship_number < 3; ship_number++) {
-    let i = Phaser.Math.Between(0, cell_quantity - 1);
-    let j = Phaser.Math.Between(0, cell_quantity - 2);
-
-    while (
-      ships_config.some(
-        (ship) =>
-          (ship[0] == i && ship[1] == j) || (ship[0] == i && ship[1] == j + 1)
-      )
-    ) {
-      i = Phaser.Math.Between(0, cell_quantity - 1);
-      j = Phaser.Math.Between(0, cell_quantity - 2);
-    }
-
-    ships_config.push([i, j]);
-    ships_config.push([i, j + 1]);
-
-    var ship2 = this.add.sprite(
-      x_0 + cell_size * (i + 0.5),
-      y_0 + cell_size * (j + 1),
-      "ship2"
-    );
-
-    ship2.alpha = 0.000001;
-    ship2.setInteractive();
-    ship2.input.hitArea.setTo(-6, 0, 39, 80);
-
-    let scene = this;
-    let winnerText;
-    ship2.state = 2;
-
-    ship2.on("pointerdown", function () {
-      hit = scene.sound.add("hit", { volume: 0.4 });
-      hit.play({
-        seek: 2.55,
-      });
-      if (this.alpha != 1) {
-        score++;
-        this.state--;
-
-        let i = Math.floor((scene.input.activePointer.x - x_0) / cell_size);
-        let j = Math.floor((scene.input.activePointer.y - y_0) / cell_size);
-
-        ///////////////////////////FLOWER//////////////////////////////////////////////////////////
-
-        let flower = scene.add.sprite(
-          x_0 + cell_size * (i + 0.5),
-          y_0 + cell_size * (j + 0.5),
-          "flower"
-        );
-
-        flower.setInteractive();
-
-        if (this.state == 0) {
-          this.alpha = 1;
-        }
-        //SCORE TEXT APPENDED TO THE PAGE
-        scoreText.setText("score: " + score + " /16");
-        // TIMER
-        if (score == 16) {
-          setTimeout(() => {
-            onEvent();
-          }, 1000);
-          function onEvent() {
-
-            let newBackground = scene.add.image(400, 300, "waves");
-            newBackground.displayWidth = 800;
-            newBackground.displayHeight = 600;
-            winnerText = scene.add.text(
-              100,
-              300,
-              "YOU WON! ALL SHIPS ARE DEFEATED!",
-              {
-                fontSize: "32px",
-                fill: "#000",
-                backgroundColor: "#dffbff",
-                fontFamily: "carino_sanssemibold",
-              }
-            );
-            winnerText.setPadding({ x: 15, y: 15 });
-            addFireworks("firework", scene);
-          }
-        }
-      }
-    });
-  }
-  ////////////////////////////// FLIPPED 2 CELL SHIP/////////////////////////////////////////
-
-  for (let ship_number = 0; ship_number < 3; ship_number++) {
-    let i = Phaser.Math.Between(0, cell_quantity - 2);
-    let j = Phaser.Math.Between(0, cell_quantity - 1);
-
-    while (
-      ships_config.some(
-        (ship) =>
-          (ship[0] == i && ship[1] == j) || (ship[0] == i + 1 && ship[1] == j)
-      )
-    ) {
-      i = Phaser.Math.Between(1, cell_quantity - 2);
-      j = Phaser.Math.Between(0, cell_quantity - 2);
-    }
-
-    ships_config.push([i, j]);
-    ships_config.push([i + 1, j]);
-
-    var flip_ship = this.add.sprite(
-      x_0 + cell_size * (i + 1),
-      y_0 + cell_size * (j + 0.5),
-      "flip_ship"
-    );
-
-    flip_ship.alpha = 0.000001;
-
-    flip_ship.setInteractive();
-    flip_ship.input.hitArea.setTo(0, -6, 80, 39);
-
-    // this.input.enableDebug(flip_ship);
-
-    let scene = this;
-    let winnerText;
-    flip_ship.state = 2;
-
-    flip_ship.on("pointerdown", function () {
-      hit = scene.sound.add("hit", { volume: 0.4 });
-      hit.play({
-        seek: 2.55,
-      });
-      if (this.alpha != 1) {
-        score++;
-        this.state--;
-
-        let i = Math.floor((scene.input.activePointer.x - x_0) / cell_size);
-        let j = Math.floor((scene.input.activePointer.y - y_0) / cell_size);
-
-        ///////////////////////////FLOWER//////////////////////////////////////////////////////////
-
-        let flower = scene.add.sprite(
-          x_0 + cell_size * (i + 0.5),
-          y_0 + cell_size * (j + 0.5),
-          "flower"
-        );
-
-        flower.setInteractive();
-
-        if (this.state == 0) {
-          this.alpha = 1;
-        }
-        //SCORE TEXT APPENDED TO THE PAGE
-        scoreText.setText("score: " + score + " /16");
-        // TIMER
-        if (score == 16) {
-          setTimeout(() => {
-            onEvent();
-          }, 1000);
-          function onEvent() {
-            let newBackground = scene.add.image(400, 300, "waves");
-            newBackground.displayWidth = 800;
-            newBackground.displayHeight = 600;
-            winnerText = scene.add.text(
-              100,
-              300,
-              "YOU WON! ALL SHIPS ARE DEFEATED!",
-              {
-                fontSize: "32px",
-                fill: "#000",
-                backgroundColor: "#dffbff",
-                fontFamily: "carino_sanssemibold",
-              }
-            );
-            winnerText.setPadding({ x: 15, y: 15 });
-            addFireworks("firework", scene);
-          }
-        }
-      }
-    });
-  }
+  ////////////////////////////// FLIPPED 2 CELL SHIP/////////////////////
+  doShips(
+    3,
+    cell_quantity,
+    2, //LimitX
+    1, // LimitY
+    1, //checkI
+    0, //checkY
+    0, //hitbox
+    -6,
+    80,
+    39,
+    cell_size,
+    0.5, //flowerPositionI
+    0.5, //flowerPositionY
+    all,
+    x_0,
+    y_0,
+    1, //spritePositionI
+    0.5, // spritePositionY
+    scene,
+    "flip_ship",
+    2, // howMuchLife
+    1, // LimitI
+    1, //Ifrom
+    0 //Jfrom
+  );
 }
 
 // SCELETON FUNCTION
@@ -475,4 +308,120 @@ function addFireworks(firework, scene) {
       .play(spriteName, true)
       .setScale(scale, scale);
   }
+}
+
+//function doShips
+function doShips(
+  shipQuantity,
+  cell_quantity,
+  limitX,
+  limitY,
+  checkI,
+  checkY,
+  hitbox1,
+  hitbox2,
+  hitbox3,
+  hitbox4,
+  cell_size,
+  flowerPositionI,
+  flowerPositionY,
+  all,
+  x_0,
+  y_0,
+  spritePositionI,
+  spritePositionY,
+  scene,
+  shipName,
+  howMuchLife,
+  limitI,
+  IFrom,
+  JFrom
+) {
+  for (
+    let ship_number = 0;
+    ship_number < shipQuantity;
+    ship_number++, spritePositionI, spritePositionY
+  ) {
+    let i = Phaser.Math.Between(IFrom, cell_quantity - limitX);
+    let j = Phaser.Math.Between(JFrom, cell_quantity - limitY);
+
+    while (
+      ships_config.some(
+        (ship) =>
+          (ship[0] == i && ship[1] == j) ||
+          (ship[0] == i + checkI && ship[1] == j + checkY)
+      )
+    ) {
+      i = Phaser.Math.Between(IFrom, cell_quantity - limitX);
+      j = Phaser.Math.Between(JFrom, cell_quantity - limitY);
+    }
+
+    ships_config.push([i, j]);
+    ships_config.push([i, j + checkY]);
+
+    let ship2 = all.add.sprite(
+      x_0 + cell_size * (i + spritePositionI),
+      y_0 + cell_size * (j + spritePositionY),
+      shipName
+    );
+
+    ship2.alpha = 0.000001;
+    ship2.setInteractive();
+    ship2.input.hitArea.setTo(hitbox1, hitbox2, hitbox3, hitbox4);
+    // scene.input.enableDebug(ship2);
+
+    let winnerText;
+    ship2.state = howMuchLife;
+
+    ship2.on("pointerdown", function () {
+      hit = scene.sound.add("hit", { volume: 0.4 });
+      hit.play({
+        seek: 2.55,
+      });
+
+      if (this.alpha != 1) {
+        score++;
+        this.state--;
+
+        let i = Math.floor((scene.input.activePointer.x - x_0) / cell_size);
+        let j = Math.floor((scene.input.activePointer.y - y_0) / cell_size);
+
+        ///////////////////////////FLOWER//////////////////////////////////
+
+        let flower = scene.add.sprite(
+          x_0 + cell_size * (i + flowerPositionI),
+          y_0 + cell_size * (j + flowerPositionY),
+          "flower"
+        );
+
+        flower.setInteractive();
+
+        if (this.state == 0) {
+          this.alpha = 1;
+        }
+        //SCORE TEXT APPENDED TO THE PAGE
+        scoreText.setText("score: " + score + " /16");
+        // TIMER
+        if (score == 16) {
+          setTimeout(() => {
+            winnerScenario(scene, winnerText);
+          }, 1000);
+        }
+      }
+    });
+  }
+}
+
+function winnerScenario(scene, winnerText) {
+  let newBackground = scene.add.image(400, 300, "waves");
+  newBackground.displayWidth = 800;
+  newBackground.displayHeight = 600;
+  winnerText = scene.add.text(100, 300, "YOU WON! ALL SHIPS ARE DEFEATED!", {
+    fontSize: "32px",
+    fill: "#000",
+    backgroundColor: "#dffbff",
+    fontFamily: "carino_sanssemibold",
+  });
+  winnerText.setPadding({ x: 15, y: 15 });
+  addFireworks("firework", scene);
 }
