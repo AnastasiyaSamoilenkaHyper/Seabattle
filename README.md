@@ -1,1 +1,9 @@
-# seabattle is a old game. It's written using phaser framework.
+Seabattle it is an version of the well-known old game.  
+
+https://anastasiyasamoilenkahyper.github.io/Seabattle/
+
+## **Technologies that were used for this project:**
+
+- Phaser
+
+
