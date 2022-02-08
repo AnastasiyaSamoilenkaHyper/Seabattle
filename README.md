@@ -4,6 +4,6 @@ https://anastasiyasamoilenkahyper.github.io/Seabattle/
 
 ## **Technologies that were used for this project:**
 
-- Phaser
+- Phaser 3
 
 
